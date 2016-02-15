@@ -1,0 +1,92 @@
+.body{
+	background-color: #E5E0D6;
+}
+
+.affix{
+	position: fixed !important;
+	top: 45px;
+}
+
+caption {
+    caption-side: bottom;
+}
+
+figcaption {
+	padding-top: 8px;
+	padding-bottom: 8px;
+	color: #777;
+	text-align: left;
+}
+
+figure {
+	margin-top: 3em;
+	margin-bottom: 1em;
+}
+
+code{
+	margin-bottom: -30px;
+}
+
+div.jumbotron{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+tr.row-q:hover{
+	background-color: rgba(47,181,229,0.2) !important; 
+}
+
+tr.row-bluebird:hover{
+	background-color: rgba(255,101,255,0.2) !important;
+}
+
+tr.row-rsvp:hover{
+	background-color: rgba(254,187,49,0.2) !important;
+}
+
+tr.row-lie:hover{
+	background-color: rgba(255,69,69,0.2) !important;
+}
+
+tr.row-when:hover{
+	background-color: rgba(154,204,0,0.2) !important;
+}
+
+tr.row-jquery:hover{
+	background-color: rgba(130,80,255,0.2) !important;
+}
+
+tr span.glyphicon {
+	padding-left: 40px;
+	padding-right: 40px;
+}
+
+span.glyphicon-ok-sign {
+	color: #6B8E23 !important;
+	-webkit-print-color-adjust: exact;
+}
+
+span.glyphicon-remove-sign {
+	color: #FF4500 !important;
+	-webkit-print-color-adjust: exact;
+}
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+
+    .col-md-9 {
+    	width: 100% !important;
+    }
+}
+
+@media not print
+{    
+    .no-non-print, .no-non-print *
+    {
+        display: none !important;
+    }
+}
