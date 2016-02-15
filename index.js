@@ -9,7 +9,7 @@ require('./libraries').then(function(libraries) {
 
 		var startTime = process.hrtime();
 		var startMemoryUsage = process.memoryUsage();
-		var currentPromise = q(true);
+		var currentPromise = resolver();
 		for (i = 0; i < numIterations; i++) {
 			currentPromise = currentPromise.then(function() {
 				return resolver();
