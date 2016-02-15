@@ -71,10 +71,10 @@
 			hotPot.cook(cutIngredients, function(err, soup){
 				if(err) {return callback(err);}
 
-				soup.serve(function(eater){
+				serve(soup, function(eater){
 					if(err) {return callback(err);}
 
-					eater.eat(callback);
+					eat(eater, callback);
 				});
 			})
 		})
