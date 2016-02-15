@@ -42,14 +42,14 @@
 					<p>Basically, whenever the value of a arbitrary but possibly complex computation cannot be returned directly (e.g. to not block further processing of the rest of the program) a Promise can be returned that serves as a placeholder for the computed value until its value has been resolved.</p>
 					
 					<h3>Using Promises in distributed Systems</h3>
-					<p>Promises can drastically reduce the number of network roundtrips in a distributed system. To explain this we assume we want to transform the data <code>A</code> using the function <code>B()</code>, however the Data and computation happens on <code>Machine B</code>, while we need the result on the <code>Machine A</code> that also contains our logic</p>
-					<p>Without Promises we would need to make two seperate calls from <code>Machine A</code> to <code>Machine B</code> to first get our data <code>A</code> and then apply our transformation <code>B(A)</code> and get the result. This means we would need 2 complete network roundtrips to get the result, as visible in <a href="#FIG-1">Figure 1</a></p>
+					<p>Promises can drastically reduce the number of network roundtrips in a distributed system. To explain this we assume we want to transform the data <code>A</code> using the function <code>B()</code>, however the Data and computation happens on <code>Machine B</code>, while we need the result on the <code>Machine A</code> that also contains our logic.</p>
+					<p>Without Promises one would need to make two seperate calls from <code>Machine A</code> to <code>Machine B</code> to first get our data <code>A</code> and then apply our transformation <code>B(A)</code> and get the result. This means 2 complete network roundtrips are needed to get the result, as visible in <a href="#FIG-1">Figure 1</a>.</p>
 					<figure id="FIG-1" class="text-center">
 						<img src="images/withoutpromises.svg" />
 						<figcaption>Figure 1 - Getting data and transform it while the data and the logic reside on two different machines</figcaption>
 					</figure>
 
-					<p>However, using Promises we can easily reduce this to a single network roundtrip, because when getting the value for our data <code>A</code>, we instantly get a Promise <code>A'</code> that represents a proxy for the future value. We now can directly pass this Promise as a parameter to our transformation function <code>B()</code> and call this function before getting the final value for <code>A</code>. For the result of the computation however, we still need to wait until the Promise for our computation <code>B'(A')</code> is resolved by the remote machine.</p>
+					<p>However, using Promises this can easily be reduced to a single network roundtrip, because when getting the value for the data <code>A</code>, one instantly get a Promise <code>A'</code> that represents a proxy for the future value. We now can directly pass this Promise as a parameter to the transformation function <code>B()</code> and call this function before getting the final value for <code>A</code>. For the result of the computation however, we still need to wait until the Promise for our computation <code>B'(A')</code> is resolved by the remote machine.</p>
 					<figure id="FIG-1" class="text-center">
 						<img src="images/withpromises.svg" />
 						<figcaption>Figure 2 - Getting the transformed data using Promises</figcaption>
@@ -58,7 +58,7 @@
 					<h3>Using Promises for eventual Values</h3>
 					<p>Promises are also very spread in systems where a lot of the logic executes asynchronuously. This is because they allow a way to synchronuously interface with the values that may are not yet present. This is especially useful in cases where otherwise chaining of operations would mean nesting of callback forming a <cite>pyramid of doom <a href="#CITE-POD">[TODO]</a></cite>.</p>
 
-					<p>To explain this concept, lets look at a dummy, JavaScript style code snippet to cook soup. Using callbacks the code may would look like this</p>
+					<p>To explain this concept, lets look at a dummy, JavaScript style code snippet to cook soup. Using callbacks the code may could look like this:</p>
 
 					<pre>
 <code class="language-javascript">function eatSoup(pot, ingredients, callback){
@@ -82,19 +82,19 @@
 };</code>
 					</pre>
 
-					<p>There are 3 problems using this code that one can see immediately</p>
+					<p>There are 3 problems using this code that one can see immediately:</p>
 					<ol>
 						<li>
-							<p>The check if an error occured happens in every callback. This is neccesary to make sure to catch all errors that happen along the call chain, however this clearly produces redundant code and therefore viaolates the <abbr title="Don't repeat yourself" class="initialism">DRY</abbr> principle.</p>
+							<p>The check if an error occured happens in every callback. This is neccesary to make sure to catch all errors that happen along the call chain. However this clearly produces redundant code and therefore viaolates the <abbr title="Don't repeat yourself" class="initialism">DRY</abbr> principle of clean code.</p>
 						</li>
 						<li>
 							<p>The code grows as fast to the right as it progresses down. This makes to code far less readable to anyone.</p>
 						</li>
 						<li>
-							<p>This is maybe the biggest problem. The preperation of the ingredients and the preheating of the pot do not depend on each other, however there is no easy way to make sure both callbacks are called when we need the values apart from nesting the calls. But this of course makes them execute serially instead of parralel and introduces a slow down in the execution that is soley due to the design of the API. One also can't argue that JavaScript runs single threaded anyway. Think of Node.js' <code>fs</code> calls that execute independant of the main program and think about scalability of such code. Doning so may introduce a real and unneccesary bottleneck in the application.</p>
+							<p>This is maybe the biggest problem. The preperation of the ingredients and the preheating of the pot do not depend on each other, however, there is no easy way to make sure both callbacks are called when we need the values, apart from nesting the calls. But this of course makes them execute serially instead of parralel and introduces a slow down in the execution that is soley due to the design of the API. One also can't argue that JavaScript runs single threaded anyway. Think of Node.js' <code>fs</code> calls that execute independent of the main program and think about scalability of such code. Doning so may introduce a real and unneccesary bottleneck in the service.</p>
 						</li>
 					</ol>
-					<p>Using Promises we can solve all of the above Problems. If instead of expecting a callback as the last parameter the API above would return Promises, we could rewrite the code as follows:</p>
+					<p>Using Promises we can solve all of the above Problems. If instead of expecting a callback as the last parameter, the API above would return Promises, we could rewrite the code as follows:</p>
 
 					<pre>
 <code class="language-javascript">function eatSoup(pot, ingredients){
@@ -109,19 +109,19 @@
 					<small>Note: The example uses a Q-like API for the calls of <code>all</code> and <code>spread</code>.</small>
 
 					<p>One can immediately see, that the code not only shrunk in size but also doesn't grow to the right that quick anymore. Furthermore all error-handling code is removed from the code since it never really did anything with the error except from passing it on.</p>
-					<p>Also by combining the Promises for the preheating and the preparation of the ingredients into a new Promise by passing them into <code>Q.all</code>, we removed that potential bottleneck from the code and allowed a full parralel execution of both methods. The combined Promise will be resolved as soon as both of the child promises are resolved.</p>
-					<p>One last advantage of the code above is, that we do not need to know any longer which code executes synchronous and which asynchronous. The <code>then()</code> function <em>promiseifies</em> all passed values. If the argument was a Promise, the function returnes a Promise that follows the input Promise. If the argument was a native value, it returns a new Promise that is already fulfilled.</p>
+					<p>Also by combining the Promises for the preheating and the preparation of the ingredients into a new Promise by passing them into <code>Q.all</code>, we removed the potential bottleneck from the code and allowed a full parralel execution of both methods. The combined Promise will be resolved as soon as both of the child promises are resolved.</p>
+					<p>One last advantage of the code above is, that we do not need to know any longer which code executes synchronous and which asynchronous. The <code>then()</code> function <em>promiseifies</em> all passed values. If the argument is a Promise, the function returnes a Promise that follows the input Promise. If the argument is a native value, it returns a new Promise that is already fulfilled.</p>
 
 					<h3>Possible Problems with Promis<em>[ Librari]</em>es</h3>
-					<p>Since in JavaScript Promises are explicit (compared to implicit Promises like in Smalltalk) and not first-class citizens, there always is some overhead involved when using them. Promises always will be a feature <em>added</em> to the language and like most libraries they provide just a wrapper around the classical, callback-based approach. Gorgi Kosev <small>(<a href="https://twitter.com/spion">@spion</a>)</small> wrote a big <cite>Analysis of generators and other async patterns in node <a href="#CITE-SPION-ANALYSIS">[TODO]</a></cite> where he compared different patterns to manage asynchronous code like generators or fibers against a callback based baseline. In his test results all Promise based approaches fell far behind the testresults of other techniques, however he later revised his results in his article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[TODO]</a></cite> where he tested Promises again with another library, namely Bluebird. In his first article he also explained that he never used Promises before and blindly used when.js and simply tried to put everything in the testcase into a promise.</p>
-					<p>All in all this was not a comparison between different Promise libraries like in this article, however one already can see that Promises introduce an overhead that may outweight all advantages they may prvide. Also there is a huge number of libraries out there that may be more or less optimized for speed and/or memory usage. Both of theese factors may be important when Promises are used in an environment that should provide high scalability like a microservice based architecture with thousands of instances running that all use Promises, and the library used introduces a memory overhead of factor 2 for each proxied value. In those cases it may would be a bad idea to wrap primitives into a promise when they are already resolved at the time of wrapping just to use them in the code in a consistent way with non-resolved ones.</p>
+					<p>Since in JavaScript Promises are explicit (compared to implicit Promises like in Smalltalk) and aren't first-class citizens, there always is some overhead involved when using them. Promises always will be a feature <em>added</em> to the language and like most libraries they provide just a wrapper around the classical, callback-based approach. Gorgi Kosev <small>(<a href="https://twitter.com/spion">@spion</a>)</small> wrote a big <cite>Analysis of generators and other async patterns in node <a href="#CITE-SPION-ANALYSIS">[TODO]</a></cite> where he compared different patterns to manage asynchronous code, like generators or fibers against a callback based baseline. In his test results all Promise based approaches fell far behind the testresults of other techniques, however he later revised his results in his article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[TODO]</a></cite> where he tested Promises again with another library, namely Bluebird. In his first article he also explained that he never used Promises before and blindly used when.js and simply tried to put everything in the testcase into a promise.</p>
+					<p>All in all this was not a comparison between different Promise libraries like this article tries to provide, however one already can see that Promises introduce an overhead that may outweight all advantages they provide. There also is a huge number of libraries out there that may be more or less optimized for speed and/or memory usage. Both of theese factors may be important when Promises are used in an environment that should provide high scalability like a microservice based architecture with thousands of instances running. If all those Instances use Promises, and the library used introduces a memory overhead of factor 2 for each proxied value, it may would be a bad idea to wrap primitives into a promise when they are already resolved at the time of wrapping just to use them in the code in a consistent way with non-resolved values.</p>
 
 					<h2>Libraries under Test</h2>
-					<p>Since the number of libraries that offer promises increases almost daily, a decision which libraries to include had to be done. This decision couldn't be based on empirical data since the lack of such. Instead, the decision is based on what appear to be the most spread and activly developed libraries.</p>
+					<p>Since the number of libraries that offer promises increases almost daily, a decision which libraries to include had to be made. This decision couldn't be based on empirical data since the lack of such. Instead, the decision is based on what appear to be the most spread and activly developed libraries.</p>
 					<p>For the Benchmark the following libraries were chosen:</p>
 					<dl class="dl-horizontal">
 						<dt><a href="https://github.com/kriskowal/q">Q</a> <small>v1.4.1</small></dt>
-						<dd>Probably the most wide spread library for promises. Because it is so popular, it even inspired <a href="https://angularjs.org">Angular.js</a> <code>$q</code> module to provide a slimmed down version of Q <cite><a href="#CITE-ANGULARQ">[TODO]</a></cite>.</dd>
+						<dd>Probably the most wide spread library for promises. Because it is so popular, it even inspired <a href="https://angularjs.org">Angular.js</a>' <code>$q</code> module to provide a slimmed down version of Q <cite><a href="#CITE-ANGULARQ">[TODO]</a></cite>.</dd>
 
 						<dt><a href="http://bluebirdjs.com/docs/getting-started.html">Bluebird</a> <small>v3.3.1</small></dt>
 						<dd>The Bluebird library offers a similar feature set than Q but claims to have a higher throughput performance and smaller memory impact. It gained a lot of attentian after Georgi Kosev's Article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[TODO]</a></cite>.</dd>
@@ -130,7 +130,7 @@
 						<dd><cite>A lightweight library that provides tools for organizing asynchronous code <a href="#CITE-RSVP">[TODO]</a></cite>.</dd>
 
 						<dt><a href="https://github.com/calvinmetcalf/lie">lie</a> <small>v3.0.2</small></dt>
-						<dd>The smallest implementation in the mix that is Promise/A+ 1.1 compliant</dd>
+						<dd>The smallest implementation in the mix that is Promise/A+ 1.1 compliant.</dd>
 
 						<dt><a href="https://github.com/cujojs/when">When.js</a> <small>v3.7.7</small></dt>
 						<dd><cite>When.js is one of the many stand-alone components of cujoJS, the JavaScript Architectural Toolkit <a href="#CITE-WHENDOC">[TODO]</a>.</cite> A Promises/A+ compliant implementation.</dd>
@@ -145,13 +145,14 @@
 					<h3>Feature Comparison</h3>
 					<p>Although this article mainly focuses on the performance and memory impact of the promise libraries in the context of an ultra-large scale system, there are of course more properties that one should consider when it comes to choosing a library.</p>
 					<p>Those properties include what other features the library offers or if there is already a Library in use which offers the functionality. This, for example, could be the case for jQuery since many large scale sites already use this library.</p>
-					<p>Another important feature may be the conformity with the official Promise/A+ specification. This specification is an open standart that defines a portable implementation of the promise pattern. Libraries that conform with this standart may be relatively simple to switch with another conformant library. The specification is available in two versions where the 1.0 version is a subset of the 1.1 version's features.</p>
+					<p>Another important feature may be the conformity with the official Promise/A+ specification. This specification is an open standard that defines a portable implementation of the promise pattern. Libraries that conform with this standard may be relatively simple to switch with another conformant library. The specification is available in two versions where the 1.0 version is a subset of the 1.1 version's features.</p>
+					<p>To compare the libraries the following features were respected:</p>
 					<dl class="dl-horizontal">
 						<dt>Promises/A+ 1.0</dt>
-						<dd>Conformity of the library with the Promises/A+ Specification in Version 1.0 as stated on the <cite>official Promises/A+ Website <a href="#CITE-A+">[TODO]</a></cite>. </dd>
+						<dd>Conformity of the library with the Promises/A+ specification in version 1.0 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[TODO]</a></cite>. </dd>
 
 						<dt>Promises/A+ 1.1</dt>
-						<dd>Conformity of the library with the Promises/A+ Specification in Version 1.1 as stated on the <cite>official Promises/A+ Website <a href="#CITE-A+">[TODO]</a></cite></dd>
+						<dd>Conformity of the library with the Promises/A+ specification in version 1.1 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[TODO]</a></cite></dd>
 
 						<dt>Stacktrace Support</dt>
 						<dd>Does the library offer stacktraces for thrown errors. For all Libraries that offer this feature this property is switchable via a global option. </dd>
@@ -159,7 +160,7 @@
 						<dt>Long Stacktraces</dt>
 						<dd>Does the library offer support for long stacktraces. Long stacktraces contain information about the stack over multiple asynchronous calls. This feature is useful for debugging, however it also has a huge impact on performance if left swiched on in production.</dd>
 
-						<dt>Available via <abbr class="initialism" name="Content Distribution Network">CDN</abbr></dt>
+						<dt>Available via <abbr class="initialism" title="Content Distribution Network">CDN</abbr></dt>
 						<dd>Whether or not the library already is available via a free CDN. All available Libraries are linked to a CDN in this column.</dd>
 					</dl>
 					<table class="table table-hover" id="TABLE-1">
@@ -218,9 +219,9 @@
 							</tr>
 						</tbody>
 					</table>
-					<h3>Library size footprint</h3>
-					<p>The size footprint of the libraries is of little importance for the use in backend scenarios. For frontend use however, this factor can be much more important,especially if the library is self-hosted and not delivered over a foreign CDN.</p>
-					<p>Like <a href="#TABLE-1">Table 1</a> shows, most of the Libraries are already available via free, spnsored CDNs. Although it is not part of this article to evaluate the pros and cons of foreign CDNs, there may are plenty of reasons why one would want to self-host a used library. In those cases the size of the library really would be a big factor when it comes to choosing between different, otherwise suitable ones. This is even more important when thinking about ultra-large scale systems or using own CDNs with a limited bandwidth. Not only does a smaller library speed up the loading of the page for the user, but also is it more likely for it to remain in a high speed cache near the border of the delivery network.</p>
+					<h3>Library size Footprint</h3>
+					<p>The size footprint of the libraries is of little importance for the use in backend scenarios. For frontend use however, this factor can be much more important, especially if the library is self-hosted and not delivered over a foreign CDN.</p>
+					<p>Like <a href="#TABLE-1">Table 1</a> shows, most of the Libraries are already available via free, spnsored CDNs. Although it is not part of this article to evaluate the pros and cons of foreign CDNs, there may are plenty of reasons why one would want to self-host a used library. In those cases the size really could be a big factor when it comes to choosing between different, otherwise suitable libraries. This is even more important when thinking about ultra-large scale systems or when using own CDNs with a limited bandwidth. Not only does a smaller library speed up the loading of the page for the user, but also is it more likely for it to remain in a high speed cache near the border of the delivery network.</p>
 					<p> <a href="#FIG-3">Figure 3</a> shows the size of the chosen Libraries in their minified Form. All Libraries come with a prebuild minified Version which was considered for this data.</p>
 
 					<figure id="FIG-3">
@@ -232,10 +233,10 @@
 					</figure>
 
 					<h2>Performance Benchmark</h2>
-					<p>Since the main focus of this article lies on the scalability of Promises on a server-side environment, the benchmark was performed using Node.js rather than using a browser. The Version used is <code>v4.1.1</code>. Goal of this benchmark was to find the sole overhead introduced by the tested Promise libraries when resolving already fulfilled values.</p>
+					<p>Since the main focus of this article lies on the scalability of Promises on a server-side environment, the benchmark was performed using Node.js rather than in a browser. The Version used was <code>v4.1.1</code>. Goal of this benchmark was to find the sole overhead introduced by the tested Promise libraries when resolving already fulfilled values.</p>
 					<h3>Benchmark Process &amp; Considerations</h3>
 					<p>The benchmark consists of a testsuit that performs a series of runs that contain either 100, 1000 or 10000 Promise creations and resolutions. The benchmark measures the time it takes from before the first Promise is created by the library until the last Promise is resolved. Each Promise already is fulfilled at the time of creation with an arbitrary primitive value of <code>1</code>. The time is measured using Node.js' <code>hrtime()</code> function which provides a timestamp with nanosecond resolution <cite><a href="#CITE-NODE-HRTIME">[TODO]</a></cite>.</p>
-					<p>Each run is executed in a new Node.js task to make sure the runs are equally warmed up and arn't influenced by the previous runs.</p>
+					<p>Each run is executed in a new Node.js process to make sure the runs are equally warmed up and arn't influenced by any previous runs.</p>
 					<p>Each library runs through the complete testsuit and logs its results to a common <abbr class="initialism" title="Comma Seperated Values">CSV</abbr> File that stores the testresults.</p>
 					<p>The code to the complete benchmark can be found on <a href="https://github.com/dangrie158/promise-benchmark">GitHub</a> and can simply be executed by running the <code>runBenchmark.sh</code> script in the root directory after installing all Node.js modules using <code>npm install</code>.</p>
 					<p>The main code that gets bechmarked looks like this:</p>
@@ -270,7 +271,7 @@ function() {
 </code>
 					</pre>
 					<p>All other libraries offer either one of those APIs.</p>
-					<p>Since jQuery requires a <code>document</code> object to initialize properly and node does not have a <abbr class="initialism" name="Document Object Model">DOM</abbr>, the jsdom package was used as a dummy <code>document</code>. This is only used while initializing and the Promise code does not interface with the <code>document</code> in any way, thus this is not neccecary a disadvantage for the jQuery library, since the initialization is not part of the benchmark.</p>
+					<p>Since jQuery requires a <code>document</code> object to initialize properly and Node.js does not have a <abbr class="initialism" title="Document Object Model">DOM</abbr>, the jsdom package was used as a dummy <code>document</code>. It is only used while initializing and the Promise code does not interface with the <code>document</code> in any way, thus this is not neccecary a disadvantage for the jQuery library, since the initialization is not part of the benchmark.</p>
 					<h3>Results</h3>
 					<figure>
 						<canvas id="performance-chart" class="chart"></canvas>
@@ -283,6 +284,7 @@ function() {
 					<p>As one can clearly see, the jQuery library clearly is outlying the other libraries which is not really dramatic, since the usage of a fontend library in a high performance backend system that should be highly scalable already would be a sign for a flawed system. However the next outlier is Q which is a fairly wide spread library for backend usage. Although it starts quite close to the others at the low end with only 100 Promises to resolve, it quickly rises far above all other libraries in the test.</p>
 					<p>Another interesting dataset is the one for the native ES6 Promises. One could quickly think that they should be faster than all other libraries since they are part of the official language specification and are implemented in native code. While this is true for the smaller two test sets with 100 and 1000 Promises, they also quickly rise and end up above all the other libraries that are implemented in JavaScript as addition to the language. Even for the smaller testsets, the difference is quite small and may not be worth be bad scalability of the native implementation. However, native Promises are still quite new to ES6 and the performance may improve drastically over time.</p>
 					<h2>Memory Consumption</h2>
+					<p>Another resource that should be considered valuable in ultra-large environments besides time is memory. Although available memory may be easier to increase in a system than throughput </p>
 					<h3>Benchmark Proxess &amp; Considerations</h3>
 					<h3>Results</h3>
 					<div class="container-fluid">
