@@ -1,5 +1,6 @@
 .body{
 	background-color: #E5E0D6;
+	
 }
 
 .affix{
@@ -73,6 +74,7 @@ span.glyphicon-remove-sign {
 
 @media print
 {    
+
     .no-print, .no-print *
     {
         display: none !important;
