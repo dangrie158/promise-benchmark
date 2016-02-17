@@ -235,7 +235,7 @@
 					<h2>Performance Benchmark</h2>
 					<p>Since the main focus of this article lies on the scalability of Promises on a server-side environment, the benchmark was performed using Node.js rather than in a browser. The Version used was <code>v4.1.1</code>. Goal of this benchmark was to find the sole overhead introduced by the tested Promise libraries when resolving already fulfilled values.</p>
 					<h3>Benchmark Process &amp; Considerations</h3>
-					<p>The benchmark consists of a testsuit that performs a series of runs that contain either 100, 1000 or 10000 Promise creations and resolutions. The benchmark measures the time it takes from before the first Promise is created by the library until the last Promise is resolved. Each Promise already is fulfilled at the time of creation with an arbitrary primitive value of <code>1</code>. The time is measured using Node.js' <code>hrtime()</code> function which provides a timestamp with nanosecond resolution <cite><a href="#CITE-NODE-HRTIME">[TODO]</a></cite>.</p>
+					<p>The benchmark consists of a testsuit that performs a series of runs that contain either 100, 1000 or 10000 Promise creations and resolutions. The benchmark measures the time it takes from before the first Promise is created by the library until the last Promise is resolved. Each Promise already is fulfilled at the time of creation with an arbitrary primitive value of <code>1</code>. The time is measured using Node.js' <code>process.hrtime()</code> function which provides a timestamp with nanosecond resolution <cite><a href="#CITE-NODE-HRTIME">[TODO]</a></cite>.</p>
 					<p>Each run is executed in a new Node.js process to make sure the runs are equally warmed up and arn't influenced by any previous runs.</p>
 					<p>Each library runs through the complete testsuit and logs its results to a common <abbr class="initialism" title="Comma Seperated Values">CSV</abbr> File that stores the testresults.</p>
 					<p>The code to the complete benchmark can be found on <a href="https://github.com/dangrie158/promise-benchmark">GitHub</a> and can simply be executed by running the <code>runBenchmark.sh</code> script in the root directory after installing all Node.js modules using <code>npm install</code>.</p>
@@ -282,19 +282,31 @@ function() {
 					</figure>
 
 					<p>As one can clearly see, the jQuery library clearly is outlying the other libraries which is not really dramatic, since the usage of a fontend library in a high performance backend system that should be highly scalable already would be a sign for a flawed system. However the next outlier is Q which is a fairly wide spread library for backend usage. Although it starts quite close to the others at the low end with only 100 Promises to resolve, it quickly rises far above all other libraries in the test.</p>
-					<p>Another interesting dataset is the one for the native ES6 Promises. One could quickly think that they should be faster than all other libraries since they are part of the official language specification and are implemented in native code. While this is true for the smaller two test sets with 100 and 1000 Promises, they also quickly rise and end up above all the other libraries that are implemented in JavaScript as addition to the language. Even for the smaller testsets, the difference is quite small and may not be worth be bad scalability of the native implementation. However, native Promises are still quite new to ES6 and the performance may improve drastically over time.</p>
+					<p>Another interesting dataset is the one for the native ES6 Promises. One could quickly think that they should be faster than all other libraries since they are part of the official language specification and are implemented in native code. While this is true for the smaller two test sets with 100 and 1000 Promises, they also quickly rise and end up above all the other libraries that are implemented in JavaScript as addition to the language. Even for the smaller testsets, the difference is quite small and may not be worth be bad scalability of the native implementation. It may also should be noted, that the native implementation is also written in JavaScript<cite><a href="#CITE-NATIVE-ES6">[TODO]</a></cite>. However, native Promises are still quite new to ES6 and the performance may improve drastically over time.</p>
+					
 					<h2>Memory Consumption</h2>
-					<p>Another resource that should be considered valuable in ultra-large environments besides time is memory. Although available memory may be easier to increase in a system than throughput </p>
-					<h3>Benchmark Proxess &amp; Considerations</h3>
+					<p>Another resource that should be considered valuable in ultra-large environments besides time is memory. Although available memory may be easier to increase in a system than throughput, it still is a ressource that should be budgeted.</p>
+					<h3>Benchmark Process &amp; Considerations</h3>
+					<p>The memory benchmark uses the same testsuit as the performance benchmark in the last chapter, however the result of first testset with only 100 promises is ignored in the article because the memory consumtion of the promises is too low in contrast to other allocations during the test and therefore go under as noise.</p>
+					<p>The memory consumption was measured using Node.js' <code>process.memoryUsage()</code> function that reports the current usage of the process' <abbr title="Resident Set Size" class="initialism">RSS</abbr>, the total heap usage and the current heap usage <cite><a href="#CITE-NODE-MEMORY">[TODO]</a></cite>. For the comparison of the libraries, only the RSS value was used, because all the allocated memory was small enough to reside in the main memory and not be swapped to disk.</p>
+					<p>To make the comparison fair with respect to all libraries, it was made sure that all libraries were initialized for all tests, whether or not the library was actually under test. This is especially important for jQuery which, in contrast to all other libraries, needs a dummy DOM <code>document</code> to properly initialize.</p>
+					<p>The memory consumption is measured right before the first Promise is created and right after the last Promise is fulfilled. The measured Value is the difference between those two measurements.</p>
 					<h3>Results</h3>
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-6"><canvas id="memory-chart1" class="chart"></canvas></div>
-							<div class="col-md-6"><canvas id="memory-chart2" class="chart"></canvas></div>
+					<figure>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-6"><canvas id="memory-chart1" class="chart"></canvas></div>
+								<div class="col-md-6"><canvas id="memory-chart2" class="chart"></canvas></div>
+							</div>
 						</div>
-					</div>
-
+						<figcaption>
+							<p>Figure 5 - Results of the memory benchmark</p>
+						</figcaption>
+					</figure>
+					<p>As one can see, jQuery and Q are again outlying all other libraries. When those two data sets are removed, the only library that still shows a significantly higher memory consumtion is lie, which in return performed really good in both, size footprint and performance comparison.</p>
+					<p>Again, native ES6 Promises performed only mediocre compared to the non-native implementations but again this also can be explained with the relatively new and unoptimized implementation in Node.js' V8 engine.</p>
 					<h2>Conclusion</h2>
+
 				</div>
 				<div class="col-md-3 no-print">
 					<nav id="toc" data-toggle="toc" data-spy="affix" data-offset-top="450" data-offset-bottom="0"></nav>
@@ -304,7 +316,7 @@ function() {
 				<h2>References</h2>
 				<p id="CITE-POD">[TODO] Devin Weaver: TriTarget.org The Pyramid of Doom: A javaScript Style Trap <a href="http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/">http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/</a> <small>Visited 2015-02-15</small></p>
 				<p id="CITE-POD">[TODO] Georgi Kosev: Analysis of generators and other async patterns in node <a href="https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html">https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html</a> <small>Visited 2015-02-15</small></p>
-				<p id="CITE-ANGULARQ">[TODO] Angular.js: API: $q<a href="https://docs.angularjs.org/api/ng/service/$q">https://docs.angularjs.org/api/ng/service/$q</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-ANGULARQ">[TODO] Angular.js: API: $q <a href="https://docs.angularjs.org/api/ng/service/$q">https://docs.angularjs.org/api/ng/service/$q</a> <small>Visited 2015-02-14</small></p>
 				<p id="CITE-SPION-WHY">[TODO] Georgi Kosev: Why I am switching to promises<a href="https://spion.github.io/posts/why-i-am-switching-to-promises.html">https://spion.github.io/posts/why-i-am-switching-to-promises.html</a> <small>Visited 2015-02-14</small></p>
 				<p id="CITE-RSVP">[TODO] RSVP.js Github page<a href="https://github.com/tildeio/rsvp.js">https://github.com/tildeio/rsvp.js</a> <small>Visited 2015-02-14</small></p>
 				<p id="CITE-WHENDOC">[TODO] when.js GitHub page<a href="https://github.com/cujojs/when">https://github.com/cujojs/when</a> <small>Visited 2015-02-14</small></p>
@@ -312,7 +324,9 @@ function() {
 				<p id="CITE-ES6">[TODO] ECMA Script 2015 Language Specification - 25.4.3 The Promise Constructor<a href="http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor">http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor</a> <small>Visited 2015-02-14</small></p>
 				<p id="CITE-CANIUSE">[TODO] Can I use... Support tables for HTML5, CSS3, etc.<a href="http://caniuse.com/#feat=promises">http://caniuse.com/#feat=promises</a> <small>Visited 2015-02-14</small></p>
 				<p id="CITE-A+">[TODO] Conformant Promises/A+ Implementations<a href="https://promisesaplus.com/implementations">https://promisesaplus.com/implementations</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-NODE-HRTIME">[TODO] Node.js Manual & Documentation <a href="https://nodejs.org/api/process.html#process_process_hrtime">https://nodejs.org/api/process.html#process_process_hrtime</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-NATIVE-ES6">[TODO] v8/src/promise.js on GitHub <a href="https://github.com/v8/v8/blob/4.3.66/src/promise.js">https://github.com/v8/v8/blob/4.3.66/src/promise.js</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-NODE-HRTIME">[TODO] Node.js Manual & Documentation, Chapter process.hrtime() <a href="https://nodejs.org/api/process.html#process_process_hrtime">https://nodejs.org/api/process.html#process_process_hrtime</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-NODE-MEMORY">[TODO] Node.js Manual & Documentation, Chapter process.memoryUsage() <a href="https://nodejs.org/api/process.html#process_process_memoryusage">https://nodejs.org/api/process.html#process_process_memoryusage</a> <small>Visited 2015-02-15</small></p>
 			</footer>
 		</div>
 
