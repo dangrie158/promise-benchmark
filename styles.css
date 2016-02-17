@@ -64,16 +64,23 @@ tr span.glyphicon {
 
 span.glyphicon-ok-sign {
 	color: #6B8E23 !important;
-	-webkit-print-color-adjust: exact;
+	-webkit-print-color-adjust: exact !important;
 }
 
 span.glyphicon-remove-sign {
 	color: #FF4500 !important;
-	-webkit-print-color-adjust: exact;
+	-webkit-print-color-adjust: exact !important;
 }
 
-@media print
-{    
+@media print 
+{
+	body {
+		-webkit-print-color-adjust: exact !important;
+	}
+
+	a[href]:after {
+		content: none !important;
+	}
 
     .no-print, .no-print *
     {
