@@ -27,12 +27,12 @@
 				</address>
 			</header>
 
-			
-
 			<article class="row">
 				<div class="col-md-9">
 					<h2 data-toc-skip class="text-center"><small>Abstract</small></h2>
-					<p class="text-center">TODO Abstract</p>
+					<p class="text-center">The Promises design pattern gained a lot of popularity over the past years, particulary in JavaScript, replacing callback based patterns and their disadvantages. This article will first give a short introduction to the topic and will explain the biggest advantages of the pattern. After that follows the main part where the most widespread libraries are benchmarked against each other in terms of throughput performance and memory consumption overhead. Firstly the different libraries are introduced and compared against some key features like size footprint or compatability to the official Promises/A+ specification. Then the testmethod of the main benchmark is presented, followed by the results and a conclusion.</p>
+
+					<p class="no-print text-muted">Note: This article uses some interactive features to provide the reader with a richer experience. It tries to bring the "Hyper" back into <abbr title="Hypertext Markup Language">HTML</abbr>. All diagrams are interactive and the table of contents always stays in the viewport. However, if you like the clasic LaTeX PDF style more, just hit <kbd id="hotkey">Ctrl</kbd> + <kbd>P</kbd> to get a print friendly version.</p>
 
 					<div class="no-non-print">
 						<h2 data-toc-skip>Table of Contents</h2>
@@ -58,7 +58,7 @@
 					</figure>
 
 					<h3>Using Promises for eventual Values</h3>
-					<p>Promises are also very spread in systems where a lot of the logic executes asynchronuously. This is because they allow a way to synchronuously interface with the values that may are not yet present. This is especially useful in cases where otherwise chaining of operations would mean nesting of callback forming a <cite>pyramid of doom <a href="#CITE-POD">[TODO]</a></cite>.</p>
+					<p>Promises are also very spread in systems where a lot of the logic executes asynchronuously. This is because they allow a way to synchronuously interface with the values that may are not yet present. This is especially useful in cases where otherwise chaining of operations would mean nesting of callback forming a <cite>pyramid of doom <a href="#CITE-POD">[1]</a></cite>.</p>
 
 					<p>To explain this concept, lets look at a dummy, JavaScript style code snippet to cook soup. Using callbacks the code may could look like this:</p>
 
@@ -115,7 +115,7 @@
 					<p>One last advantage of the code above is, that we do not need to know any longer which code executes synchronous and which asynchronous. The <code>then()</code> function <em>promiseifies</em> all passed values. If the argument is a Promise, the function returnes a Promise that follows the input Promise. If the argument is a native value, it returns a new Promise that is already fulfilled.</p>
 
 					<h3>Possible Problems with Promis<em>[ Librari]</em>es</h3>
-					<p>Since in JavaScript Promises are explicit (compared to implicit Promises like in Smalltalk) and aren't first-class citizens, there always is some overhead involved when using them. Promises always will be a feature <em>added</em> to the language and like most libraries they provide just a wrapper around the classical, callback-based approach. Gorgi Kosev <small>(<a href="https://twitter.com/spion">@spion</a>)</small> wrote a big <cite>Analysis of generators and other async patterns in node <a href="#CITE-SPION-ANALYSIS">[TODO]</a></cite> where he compared different patterns to manage asynchronous code, like generators or fibers against a callback based baseline. In his test results all Promise based approaches fell far behind the testresults of other techniques, however he later revised his results in his article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[TODO]</a></cite> where he tested Promises again with another library, namely Bluebird. In his first article he also explained that he never used Promises before and blindly used when.js and simply tried to put everything in the testcase into a promise.</p>
+					<p>Since in JavaScript Promises are explicit (compared to implicit Promises like in Smalltalk) and aren't first-class citizens, there always is some overhead involved when using them. Promises always will be a feature <em>added</em> to the language and like most libraries they provide just a wrapper around the classical, callback-based approach. Gorgi Kosev <small>(<a href="https://twitter.com/spion">@spion</a>)</small> wrote a big <cite>Analysis of generators and other async patterns in node <a href="#CITE-SPION-ANALYSIS">[2]</a></cite> where he compared different patterns to manage asynchronous code, like generators or fibers against a callback based baseline. In his test results all Promise based approaches fell far behind the testresults of other techniques, however he later revised his results in his article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[3]</a></cite> where he tested Promises again with another library, namely Bluebird. In his first article he also explained that he never used Promises before and blindly used when.js and simply tried to put everything in the testcase into a promise.</p>
 					<p>All in all this was not a comparison between different Promise libraries like this article tries to provide, however one already can see that Promises introduce an overhead that may outweight all advantages they provide. There also is a huge number of libraries out there that may be more or less optimized for speed and/or memory usage. Both of theese factors may be important when Promises are used in an environment that should provide high scalability like a microservice based architecture with thousands of instances running. If all those Instances use Promises, and the library used introduces a memory overhead of factor 2 for each proxied value, it may would be a bad idea to wrap primitives into a promise when they are already resolved at the time of wrapping just to use them in the code in a consistent way with non-resolved values.</p>
 
 					<h2>Libraries under Test</h2>
@@ -123,25 +123,25 @@
 					<p>For the Benchmark the following libraries were chosen:</p>
 					<dl class="dl-horizontal">
 						<dt><a href="https://github.com/kriskowal/q">Q</a> <small>v1.4.1</small></dt>
-						<dd>Probably the most wide spread library for promises. Because it is so popular, it even inspired <a href="https://angularjs.org">Angular.js</a>' <code>$q</code> module to provide a slimmed down version of Q <cite><a href="#CITE-ANGULARQ">[TODO]</a></cite>.</dd>
+						<dd>Probably the most wide spread library for promises. Because it is so popular, it even inspired <a href="https://angularjs.org">Angular.js</a>' <code>$q</code> module to provide a slimmed down version of Q <cite><a href="#CITE-ANGULARQ">[4]</a></cite>.</dd>
 
 						<dt><a href="http://bluebirdjs.com/docs/getting-started.html">Bluebird</a> <small>v3.3.1</small></dt>
-						<dd>The Bluebird library offers a similar feature set than Q but claims to have a higher throughput performance and smaller memory impact. It gained a lot of attentian after Georgi Kosev's Article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[TODO]</a></cite>.</dd>
+						<dd>The Bluebird library offers a similar feature set than Q but claims to have a higher throughput performance and smaller memory impact. It gained a lot of attentian after Georgi Kosev's Article <cite>Why I am switching to promises <a href="#CITE-SPION-WHY">[3]</a></cite>.</dd>
 
 						<dt><a href="https://github.com/tildeio/rsvp.js/">RSVP.js</a> <small>v3.2.0</small></dt>
-						<dd><cite>A lightweight library that provides tools for organizing asynchronous code <a href="#CITE-RSVP">[TODO]</a></cite>.</dd>
+						<dd><cite>A lightweight library that provides tools for organizing asynchronous code <a href="#CITE-RSVP">[5]</a></cite>.</dd>
 
 						<dt><a href="https://github.com/calvinmetcalf/lie">lie</a> <small>v3.0.2</small></dt>
 						<dd>The smallest implementation in the mix that is Promise/A+ 1.1 compliant.</dd>
 
 						<dt><a href="https://github.com/cujojs/when">When.js</a> <small>v3.7.7</small></dt>
-						<dd><cite>When.js is one of the many stand-alone components of cujoJS, the JavaScript Architectural Toolkit <a href="#CITE-WHENDOC">[TODO]</a>.</cite> A Promises/A+ compliant implementation.</dd>
+						<dd><cite>When.js is one of the many stand-alone components of cujoJS, the JavaScript Architectural Toolkit <a href="#CITE-WHENDOC">[6]</a>.</cite> A Promises/A+ compliant implementation.</dd>
 
 						<dt><a href="https://jquery.com">jQuery</a> <small>v2.2.0</small></dt>
-						<dd>The popular JavaScript framework offers a basic functionality for Promises since Version 1.5 <cite><a href="#CITE-JQDOC">[TODO]</a></cite>. Although this implementation only offers very few features and is not compliant with the Promises/A+ specification it still may be interesting because many Websites already use this library.</dd>
+						<dd>The popular JavaScript framework offers a basic functionality for Promises since Version 1.5 <cite><a href="#CITE-JQDOC">[7]</a></cite>. Although this implementation only offers very few features and is not compliant with the Promises/A+ specification it still may be interesting because many Websites already use this library.</dd>
 
 						<dt>native ES6 Promises</dt>
-						<dd>Since ECMA Script 6, Promises are part of the <cite>specification for the language <a href="#CITE-ES6">[TODO]</a></cite>. Most modern Browsers now implement this Feature natively <cite><a href="#CITE-CANIUSE">[TODO]</a></cite>.</dd>
+						<dd>Since ECMA Script 6, Promises are part of the <cite>specification for the language <a href="#CITE-ES6">[8]</a></cite>. Most modern Browsers now implement this Feature natively <cite><a href="#CITE-CANIUSE">[9]</a></cite>.</dd>
 					</dl>
 
 					<h3>Feature Comparison</h3>
@@ -151,10 +151,10 @@
 					<p>To compare the libraries the following features were respected:</p>
 					<dl class="dl-horizontal">
 						<dt>Promises/A+ 1.0</dt>
-						<dd>Conformity of the library with the Promises/A+ specification in version 1.0 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[TODO]</a></cite>. </dd>
+						<dd>Conformity of the library with the Promises/A+ specification in version 1.0 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[10]</a></cite>. </dd>
 
 						<dt>Promises/A+ 1.1</dt>
-						<dd>Conformity of the library with the Promises/A+ specification in version 1.1 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[TODO]</a></cite></dd>
+						<dd>Conformity of the library with the Promises/A+ specification in version 1.1 as stated on the <cite>official Promises/A+ website <a href="#CITE-A+">[10]</a></cite></dd>
 
 						<dt>Stacktrace Support</dt>
 						<dd>Does the library offer stacktraces for thrown errors. For all Libraries that offer this feature this property is switchable via a global option. </dd>
@@ -237,7 +237,7 @@
 					<h2>Performance Benchmark</h2>
 					<p>Since the main focus of this article lies on the scalability of Promises on a server-side environment, the benchmark was performed using Node.js rather than in a browser. The Version used was <code>v4.1.1</code>. Goal of this benchmark was to find the sole overhead introduced by the tested Promise libraries when resolving already fulfilled values.</p>
 					<h3>Benchmark Process &amp; Considerations</h3>
-					<p>The benchmark consists of a testsuit that performs a series of runs that contain either 100, 1000 or 10000 Promise creations and resolutions. The benchmark measures the time it takes from before the first Promise is created by the library until the last Promise is resolved. Each Promise already is fulfilled at the time of creation with an arbitrary primitive value of <code>1</code>. The time is measured using Node.js' <code>process.hrtime()</code> function which provides a timestamp with nanosecond resolution <cite><a href="#CITE-NODE-HRTIME">[TODO]</a></cite>.</p>
+					<p>The benchmark consists of a testsuit that performs a series of runs that contain either 100, 1000 or 10000 Promise creations and resolutions. The benchmark measures the time it takes from before the first Promise is created by the library until the last Promise is resolved. Each Promise already is fulfilled at the time of creation with an arbitrary primitive value of <code>1</code>. The time is measured using Node.js' <code>process.hrtime()</code> function which provides a timestamp with nanosecond resolution <cite><a href="#CITE-NODE-HRTIME">[11]</a></cite>.</p>
 					<p>Each run is executed in a new Node.js process to make sure the runs are equally warmed up and arn't influenced by any previous runs.</p>
 					<p>Each library runs through the complete testsuit and logs its results to a common <abbr class="initialism" title="Comma Seperated Values">CSV</abbr> File that stores the testresults.</p>
 					<p>The code to the complete benchmark can be found on <a href="https://github.com/dangrie158/promise-benchmark">GitHub</a> and can simply be executed by running the <code>runBenchmark.sh</code> script in the root directory after installing all Node.js modules using <code>npm install</code>.</p>
@@ -284,13 +284,13 @@ function() {
 					</figure>
 
 					<p>As one can clearly see, the jQuery library clearly is outlying the other libraries which is not really dramatic, since the usage of a fontend library in a high performance backend system that should be highly scalable already would be a sign for a flawed system. However the next outlier is Q which is a fairly wide spread library for backend usage. Although it starts quite close to the others at the low end with only 100 Promises to resolve, it quickly rises far above all other libraries in the test.</p>
-					<p>Another interesting dataset is the one for the native ES6 Promises. One could quickly think that they should be faster than all other libraries since they are part of the official language specification and are implemented in native code. While this is true for the smaller two test sets with 100 and 1000 Promises, they also quickly rise and end up above all the other libraries that are implemented in JavaScript as addition to the language. Even for the smaller testsets, the difference is quite small and may not be worth be bad scalability of the native implementation. It may also should be noted, that the native implementation is also written in JavaScript<cite><a href="#CITE-NATIVE-ES6">[TODO]</a></cite>. However, native Promises are still quite new to ES6 and the performance may improve drastically over time.</p>
+					<p>Another interesting dataset is the one for the native ES6 Promises. One could quickly think that they should be faster than all other libraries since they are part of the official language specification and are implemented in native code. While this is true for the smaller two test sets with 100 and 1000 Promises, they also quickly rise and end up above all the other libraries that are implemented in JavaScript as addition to the language. Even for the smaller testsets, the difference is quite small and may not be worth be bad scalability of the native implementation. It may also should be noted, that the native implementation is also written in JavaScript <cite><a href="#CITE-NATIVE-ES6">[12]</a></cite>. However, native Promises are still quite new to ES6 and the performance may improve drastically over time.</p>
 					
 					<h2>Memory Consumption</h2>
 					<p>Another resource that should be considered valuable in ultra-large environments besides time is memory. Although available memory may be easier to increase in a system than throughput, it still is a ressource that should be budgeted.</p>
 					<h3>Benchmark Process &amp; Considerations</h3>
 					<p>The memory benchmark uses the same testsuit as the performance benchmark in the last chapter, however the result of first testset with only 100 promises is ignored in the article because the memory consumtion of the promises is too low in contrast to other allocations during the test and therefore go under as noise.</p>
-					<p>The memory consumption was measured using Node.js' <code>process.memoryUsage()</code> function that reports the current usage of the process' <abbr title="Resident Set Size" class="initialism">RSS</abbr>, the total heap usage and the current heap usage <cite><a href="#CITE-NODE-MEMORY">[TODO]</a></cite>. For the comparison of the libraries, only the RSS value was used, because all the allocated memory was small enough to reside in the main memory and not be swapped to disk.</p>
+					<p>The memory consumption was measured using Node.js' <code>process.memoryUsage()</code> function that reports the current usage of the process' <abbr title="Resident Set Size" class="initialism">RSS</abbr>, the total heap usage and the current heap usage <cite><a href="#CITE-NODE-MEMORY">[13]</a></cite>. For the comparison of the libraries, only the RSS value was used, because all the allocated memory was small enough to reside in the main memory and not be swapped to disk.</p>
 					<p>To make the comparison fair with respect to all libraries, it was made sure that all libraries were initialized for all tests, whether or not the library was actually under test. This is especially important for jQuery which, in contrast to all other libraries, needs a dummy DOM <code>document</code> to properly initialize.</p>
 					<p>The memory consumption is measured right before the first Promise is created and right after the last Promise is fulfilled. The measured Value is the difference between those two measurements.</p>
 					<h3>Results</h3>
@@ -307,8 +307,14 @@ function() {
 					</figure>
 					<p>As one can see, jQuery and Q are again outlying all other libraries. When those two data sets are removed, the only library that still shows a significantly higher memory consumtion is lie, which in return performed really good in both, size footprint and performance comparison.</p>
 					<p>Again, native ES6 Promises performed only mediocre compared to the non-native implementations but again this also can be explained with the relatively new and unoptimized implementation in Node.js' V8 engine.</p>
+
 					<h2>Conclusion</h2>
-					<p></p>
+					<p>While most of the results were very close together for both, the performance and the memory benchmark, there were two ouliers that performed far worse than all others; jQuery and Q. While jQuery will only be used on client-side applications where performance, throughput and memory consumption may not be important, Q, probably the most wide spread Promises only library, will be used in those situations and thus may introduce a possible bottleneck for throughput and requests per machine.</p>
+					<p>It is also imporant to note, that the native ES6 Promises did not outperform all other libraries, since they are, at least in V8, implemented in JavaScript and still not that optimized as other libraries.</p>
+					<p>This article does not try to elect a winner library based on the data of this benchmark. However, looking at the found data and other sources on the internet like Georgi Kosevs comparison of async patterns (<cite><a href="CITE-SPION-ANALYSIS">[2]</a></cite>), the Bluebird library seems to perform really well when it comes to scale. This is particulary interesting since Bluebird seems to differ from all other libraries in one aspect. On the official <a href="http://bluebirdjs.com/">Bluebird Website</a>, the developers state the design principle
+						<blockquote class="blockquote-reverse"><strong>Pragmatic and not theoretical.</strong> - Bluebird will always pick the pragmatic route vs the theoretically elegant one when there is a conflict. The library's API was created based on real-life use cases and after a lot of consideration.</blockquote>
+					This may proove again that when it comes to scale, there is no place for theoretical elegance.
+					</p>
 
 				</div>
 				<div class="col-md-3 no-print">
@@ -317,19 +323,20 @@ function() {
 			</article>
 			<footer>
 				<h2>References</h2>
-				<p id="CITE-POD">[TODO] Devin Weaver: TriTarget.org The Pyramid of Doom: A javaScript Style Trap <a href="http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/">http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/</a> <small>Visited 2015-02-15</small></p>
-				<p id="CITE-POD">[TODO] Georgi Kosev: Analysis of generators and other async patterns in node <a href="https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html">https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html</a> <small>Visited 2015-02-15</small></p>
-				<p id="CITE-ANGULARQ">[TODO] Angular.js: API: $q <a href="https://docs.angularjs.org/api/ng/service/$q">https://docs.angularjs.org/api/ng/service/$q</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-SPION-WHY">[TODO] Georgi Kosev: Why I am switching to promises <a href="https://spion.github.io/posts/why-i-am-switching-to-promises.html">https://spion.github.io/posts/why-i-am-switching-to-promises.html</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-RSVP">[TODO] RSVP.js Github page <a href="https://github.com/tildeio/rsvp.js">https://github.com/tildeio/rsvp.js</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-WHENDOC">[TODO] when.js GitHub page <a href="https://github.com/cujojs/when">https://github.com/cujojs/when</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-JQDOC">[TODO] Deferred Object | jQuery API Documentation <a href="http://api.jquery.com/category/deferred-object/">http://api.jquery.com/category/deferred-object/</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-ES6">[TODO] ECMA Script 2015 Language Specification - 25.4.3 The Promise Constructor <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor">http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-CANIUSE">[TODO] Can I use... Support tables for HTML5, CSS3, etc. <a href="http://caniuse.com/#feat=promises">http://caniuse.com/#feat=promises</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-A+">[TODO] Conformant Promises/A+ Implementations <a href="https://promisesaplus.com/implementations">https://promisesaplus.com/implementations</a> <small>Visited 2015-02-14</small></p>
-				<p id="CITE-NATIVE-ES6">[TODO] v8/src/promise.js on GitHub <a href="https://github.com/v8/v8/blob/4.3.66/src/promise.js">https://github.com/v8/v8/blob/4.3.66/src/promise.js</a> <small>Visited 2015-02-15</small></p>
-				<p id="CITE-NODE-HRTIME">[TODO] Node.js Manual & Documentation, Chapter process.hrtime() <a href="https://nodejs.org/api/process.html#process_process_hrtime">https://nodejs.org/api/process.html#process_process_hrtime</a> <small>Visited 2015-02-15</small></p>
-				<p id="CITE-NODE-MEMORY">[TODO] Node.js Manual & Documentation, Chapter process.memoryUsage() <a href="https://nodejs.org/api/process.html#process_process_memoryusage">https://nodejs.org/api/process.html#process_process_memoryusage</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-POD">[1] Devin Weaver: TriTarget.org The Pyramid of Doom: A javaScript Style Trap <a href="http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/">http://tritarget.org/blog/2012/11/28/the-pyramid-of-doom-a-javascript-style-trap/</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-SPION-ANALYSIS">[2] Georgi Kosev: Analysis of generators and other async patterns in node <a href="https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html">https://spion.github.io/posts/analysis-generators-and-other-async-patterns-node.html</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-SPION-WHY">[3] Georgi Kosev: Why I am switching to promises <a href="https://spion.github.io/posts/why-i-am-switching-to-promises.html">https://spion.github.io/posts/why-i-am-switching-to-promises.html</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-ANGULARQ">[4] Angular.js: API: $q <a href="https://docs.angularjs.org/api/ng/service/$q">https://docs.angularjs.org/api/ng/service/$q</a> <small>Visited 2015-02-14</small></p>
+				
+				<p id="CITE-RSVP">[5] RSVP.js Github page <a href="https://github.com/tildeio/rsvp.js">https://github.com/tildeio/rsvp.js</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-WHENDOC">[6] when.js GitHub page <a href="https://github.com/cujojs/when">https://github.com/cujojs/when</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-JQDOC">[7] Deferred Object | jQuery API Documentation <a href="http://api.jquery.com/category/deferred-object/">http://api.jquery.com/category/deferred-object/</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-ES6">[8] ECMA Script 2015 Language Specification - 25.4.3 The Promise Constructor <a href="http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor">http://www.ecma-international.org/ecma-262/6.0/#sec-promise-constructor</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-CANIUSE">[9] Can I use... Support tables for HTML5, CSS3, etc. <a href="http://caniuse.com/#feat=promises">http://caniuse.com/#feat=promises</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-A+">[10] Conformant Promises/A+ Implementations <a href="https://promisesaplus.com/implementations">https://promisesaplus.com/implementations</a> <small>Visited 2015-02-14</small></p>
+				<p id="CITE-NODE-HRTIME">[11] Node.js Manual & Documentation, Chapter process.hrtime() <a href="https://nodejs.org/api/process.html#process_process_hrtime">https://nodejs.org/api/process.html#process_process_hrtime</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-NATIVE-ES6">[12] v8/src/promise.js on GitHub <a href="https://github.com/v8/v8/blob/4.3.66/src/promise.js">https://github.com/v8/v8/blob/4.3.66/src/promise.js</a> <small>Visited 2015-02-15</small></p>
+				<p id="CITE-NODE-MEMORY">[13] Node.js Manual & Documentation, Chapter process.memoryUsage() <a href="https://nodejs.org/api/process.html#process_process_memoryusage">https://nodejs.org/api/process.html#process_process_memoryusage</a> <small>Visited 2015-02-15</small></p>
 			</footer>
 		</div>
 
