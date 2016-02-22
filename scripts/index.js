@@ -1,5 +1,11 @@
 $(function() {
 
+	//adjust the hotkey for OSX plattform
+	var os = navigator.platform;
+    if (os.indexOf("Mac") != -1) {
+        $('#hotkey').text( '⌘' );
+    }
+
 	var convertToReadableSize = function(bytes) {
 		var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 		if (bytes == 0) return '0 Byte';
